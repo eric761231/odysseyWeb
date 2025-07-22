@@ -142,6 +142,9 @@
         var content = document.querySelector('.creed-content');
         var triangle = document.querySelector('.triangle');
         var loaded = false;
+        
+        // 獲取 Warrior's Creed 音頻元素
+        var warriorAudio = document.querySelector('audio[src*="meditation4_warriorscreed.mp3"]');
     
         function showCreedAnimated(pairs) {
             content.innerHTML = '';
@@ -161,6 +164,45 @@
                 }, 10);
             }
             showNext();
+        }
+        
+        // 函數：展開戰士信條
+        function expandCreed() {
+            var expanded = toggle.getAttribute('aria-expanded') === 'true';
+            if (!expanded) {
+                toggle.setAttribute('aria-expanded', 'true');
+                content.classList.remove('hide');
+                triangle.textContent = '▼';
+                
+                if (!loaded) {
+                    // 第一次載入，從檔案讀取
+                    var base = "./warrior'sCreed/warror'sCreed.txt";
+                    fetch(base)
+                        .then(function(response) { return response.text(); })
+                        .then(function(text) {
+                            var lines = text.split(/\r?\n/).filter(Boolean);
+                            var pairs = [];
+                            for (var i = 0; i < lines.length - 1; i += 2) {
+                                pairs.push([lines[i], lines[i + 1]]);
+                            }
+                            showCreedAnimated(pairs);
+                            // 保存原始資料供後續使用
+                            content.setAttribute('data-lines', lines.join(','));
+                            loaded = true;
+                        })
+                        .catch(function() {
+                            content.textContent = '無法載入信條內容。';
+                        });
+                } else {
+                    // 已經載入過，使用保存的資料並顯示動畫
+                    var lines = content.getAttribute('data-lines').split(',').filter(Boolean);
+                    var pairs = [];
+                    for (var i = 0; i < lines.length - 1; i += 2) {
+                        pairs.push([lines[i], lines[i + 1]]);
+                    }
+                    showCreedAnimated(pairs);
+                }
+            }
         }
     
         toggle.addEventListener('click', function() {
@@ -204,6 +246,14 @@
                 }
             }
         });
+        
+        // 為 Warrior's Creed 音頻添加播放事件監聽器
+        if (warriorAudio) {
+            warriorAudio.addEventListener('play', function() {
+                // 延遲一小段時間後自動展開信條，讓用戶有時間看到播放開始
+                setTimeout(expandCreed, 500);
+            });
+        }
     });
     </script>
 </body>
