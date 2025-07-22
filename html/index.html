@@ -145,6 +145,13 @@
         
         // 獲取第四個音頻元素（Warrior's Creed）
         var warriorAudio = document.querySelector('.music-item:nth-child(4) audio');
+        // 備用選擇器
+        if (!warriorAudio) {
+            warriorAudio = document.querySelector('.music-item:last-child audio');
+        }
+        
+        // 調試：檢查是否找到音頻元素
+        console.log('Warrior audio element:', warriorAudio);
     
         function showCreedAnimated(pairs) {
             content.innerHTML = '';
@@ -248,10 +255,15 @@
         });
         
         // 監聽第四個音頻的播放事件
-        warriorAudio.addEventListener('play', function() {
-            // 延遲 1 秒後自動展開戰士信條
-            setTimeout(autoExpandCreed, 1000);
-        });
+        if (warriorAudio) {
+            warriorAudio.addEventListener('play', function() {
+                console.log('Warrior audio started playing');
+                // 延遲 0.2 秒後自動展開戰士信條
+                setTimeout(autoExpandCreed, 200);
+            });
+        } else {
+            console.log('Warrior audio element not found');
+        }
     });
     </script>
 </body>
