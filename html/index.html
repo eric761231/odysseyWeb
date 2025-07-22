@@ -143,8 +143,8 @@
         var triangle = document.querySelector('.triangle');
         var loaded = false;
         
-        // 獲取 Warrior's Creed 音頻元素
-        var warriorAudio = document.querySelector('audio[src*="meditation4_warriorscreed.mp3"]');
+        // 獲取第四個音頻元素（Warrior's Creed）
+        var warriorAudio = document.querySelector('.music-item:nth-child(4) audio');
     
         function showCreedAnimated(pairs) {
             content.innerHTML = '';
@@ -166,8 +166,8 @@
             showNext();
         }
         
-        // 函數：展開戰士信條
-        function expandCreed() {
+        // 自動展開戰士信條的函數
+        function autoExpandCreed() {
             var expanded = toggle.getAttribute('aria-expanded') === 'true';
             if (!expanded) {
                 toggle.setAttribute('aria-expanded', 'true');
@@ -247,13 +247,11 @@
             }
         });
         
-        // 為 Warrior's Creed 音頻添加播放事件監聽器
-        if (warriorAudio) {
-            warriorAudio.addEventListener('play', function() {
-                // 延遲一小段時間後自動展開信條，讓用戶有時間看到播放開始
-                setTimeout(expandCreed, 500);
-            });
-        }
+        // 監聽第四個音頻的播放事件
+        warriorAudio.addEventListener('play', function() {
+            // 延遲 1 秒後自動展開戰士信條
+            setTimeout(autoExpandCreed, 1000);
+        });
     });
     </script>
 </body>
