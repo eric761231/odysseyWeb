@@ -1,0 +1,13 @@
+{
+  "name": "meditation-music-player",
+  "version": "1.0.0",
+  "description": "一個簡潔優雅的冥想音樂播放器",
+  "main": "html/index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "python -m http.server 8000"
+  },
+  "keywords": ["music", "meditation", "player", "web"],
+  "author": "Your Name",
+  "license": "MIT"
+}
