@@ -615,13 +615,11 @@
 
         async function loadCreedContent() {
             try {
-                const response = await fetch('../warrior\'sCreed/warror\'sCreed.txt');
+                const response = await fetch("warrior'sCreed/warror'sCreed.txt");
                 creedContent = await response.text();
-                
                 // 將內容按行分組（中英文對）
                 const lines = creedContent.split('\n').filter(line => line.trim());
                 creedLines = [];
-                
                 for (let i = 0; i < lines.length; i += 2) {
                     if (i + 1 < lines.length) {
                         creedLines.push({
@@ -630,10 +628,8 @@
                         });
                     }
                 }
-                
                 // 準備HTML結構但不顯示內容
                 document.getElementById('creedText').innerHTML = '';
-                
             } catch (error) {
                 console.error('無法載入戰士信條:', error);
                 document.getElementById('creedText').innerHTML = '<div class="creed-line">無法載入戰士信條內容</div>';
