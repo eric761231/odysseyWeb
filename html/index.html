@@ -89,7 +89,10 @@
             margin-bottom: 10px;
             text-align: left;
             opacity: 0;
-            transition: opacity 0.5s;
+            transition: opacity 0.8s ease-in-out;
+        }
+        .hide {
+            display: none !important;
         }
     </style>
 </head>
@@ -128,7 +131,7 @@
                     <button class="creed-toggle" aria-expanded="false" aria-controls="creed-content">
                         <span class="triangle">▶</span> 戰士的信條
                     </button>
-                    <div class="creed-content" id="creed-content" style="display:none;"></div>
+                    <div class="creed-content hide" id="creed-content"></div>
                 </div>
             </li>
         </ul>
@@ -151,10 +154,10 @@
                 group.innerHTML = `<div>${pairs[idx][0]}</div><div>${pairs[idx][1]}</div>`;
                 content.appendChild(group);
                 setTimeout(() => {
-                    group.style.transition = 'opacity 0.5s';
+                    group.style.transition = 'opacity 0.4s ease-in-out';
                     group.style.opacity = 1;
                     idx++;
-                    setTimeout(showNext, 180);
+                    setTimeout(showNext, 180); // 改為 0.3 秒間隔
                 }, 10);
             }
             showNext();
@@ -163,24 +166,42 @@
         toggle.addEventListener('click', function() {
             var expanded = toggle.getAttribute('aria-expanded') === 'true';
             toggle.setAttribute('aria-expanded', !expanded);
-            content.style.display = expanded ? 'none' : 'block';
+            if (expanded) {
+                content.classList.add('hide');
+            } else {
+                content.classList.remove('hide');
+            }
             triangle.textContent = expanded ? '▶' : '▼';
-    
-            if (!expanded && !loaded) {
-                fetch("warriorCreed/warror'sCreed.txt")
-                    .then(function(response) { return response.text(); })
-                    .then(function(text) {
-                        var lines = text.split(/\r?\n/).filter(Boolean);
-                        var pairs = [];
-                        for (var i = 0; i < lines.length - 1; i += 2) {
-                            pairs.push([lines[i], lines[i + 1]]);
-                        }
-                        showCreedAnimated(pairs);
-                        loaded = true;
-                    })
-                    .catch(function() {
-                        content.textContent = '無法載入信條內容。';
-                    });
+
+            if (!expanded) {
+                if (!loaded) {
+                    // 第一次載入，從檔案讀取
+                    var base = "./warrior'sCreed/warror'sCreed.txt";
+                    fetch(base)
+                        .then(function(response) { return response.text(); })
+                        .then(function(text) {
+                            var lines = text.split(/\r?\n/).filter(Boolean);
+                            var pairs = [];
+                            for (var i = 0; i < lines.length - 1; i += 2) {
+                                pairs.push([lines[i], lines[i + 1]]);
+                            }
+                            showCreedAnimated(pairs);
+                            // 保存原始資料供後續使用
+                            content.setAttribute('data-lines', lines.join(','));
+                            loaded = true;
+                        })
+                        .catch(function() {
+                            content.textContent = '無法載入信條內容。';
+                        });
+                } else {
+                    // 已經載入過，使用保存的資料並顯示動畫
+                    var lines = content.getAttribute('data-lines').split(',').filter(Boolean);
+                    var pairs = [];
+                    for (var i = 0; i < lines.length - 1; i += 2) {
+                        pairs.push([lines[i], lines[i + 1]]);
+                    }
+                    showCreedAnimated(pairs);
+                }
             }
         });
     });
