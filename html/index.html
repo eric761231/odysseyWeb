@@ -5,17 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>冥想音樂播放器</title>
     <style>
-        .creed-line, .creed-line > div {
-            line-height: 1 !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
@@ -26,654 +15,175 @@
             justify-content: center;
             color: #e0e0e0;
         }
-
         .container {
             background: rgba(30, 30, 45, 0.95);
             border-radius: 20px;
             padding: 40px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-            -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
             max-width: 600px;
             width: 90%;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        .header {
+        h1 {
             text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            color: #e0e0e0;
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            font-size: 2.2em;
             font-weight: 300;
+            margin-bottom: 10px;
         }
-
-        .header p {
-            color: #b0b0b0;
-            font-size: 1.1em;
-        }
-
         .music-list {
             list-style: none;
+            padding: 0;
         }
-
         .music-item {
             background: rgba(45, 45, 60, 0.8);
-            margin-bottom: 15px;
+            margin-bottom: 18px;
             border-radius: 12px;
-            padding: 20px;
-            transition: all 0.3s ease;
-            border-left: 4px solid transparent;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .music-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            background: rgba(55, 55, 70, 0.9);
-        }
-
-        .music-item.playing {
-            border-left-color: #4caf50;
-            background: rgba(76, 175, 80, 0.1);
-            border-color: rgba(76, 175, 80, 0.2);
-        }
-
-        .music-info {
+            padding: 18px;
+            border: 1px solid rgba(255,255,255,0.07);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .music-title {
-            font-size: 1.2em;
-            font-weight: 500;
-            color: #e0e0e0;
-        }
-
-        .music-controls {
-            display: flex;
+            flex-direction: column;
             gap: 10px;
         }
-
-        .btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        .music-title {
+            font-size: 1.1em;
+            font-weight: 500;
+            color: #e0e0e0;
         }
-
-        .btn:hover {
-            background: #7c8feb;
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn:disabled {
-            background: #555;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .btn.stop {
-            background: #f44336;
-            box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
-        }
-
-        .audio-player {
+        audio {
             width: 100%;
+            margin-top: 6px;
+        }
+        .creed-container {
             margin-top: 10px;
-            border-radius: 6px;
-            filter: invert(1) hue-rotate(180deg);
         }
-
-        .volume-display {
-            position: absolute;
-            top: -35px;
-            right: 0;
-            background: transparent;
+        .creed-toggle {
+            background: none;
+            border: none;
             color: #e0e0e0;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8em;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        .audio-container {
-            position: relative;
-        }
-
-        .volume-display.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .volume-percentage {
-            font-weight: 500;
-        }
-
-        .current-playing {
-            text-align: center;
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(33, 150, 243, 0.1);
-            border-radius: 10px;
-            border-left: 4px solid #2196f3;
-            display: none;
-            border: 1px solid rgba(33, 150, 243, 0.2);
-        }
-
-        .current-playing.show {
-            display: block;
-        }
-
-        .current-playing h3 {
-            color: #64b5f6;
-            margin-bottom: 5px;
-        }
-
-        .warriors-creed-section {
-            margin-top: 25px;
-            background: rgba(0, 0, 0, 0.9);
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-left: 4px solid transparent;
-            transition: all 0.3s ease;
-        }
-
-        .warriors-creed-section:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-            background: rgba(0, 0, 0, 1);
-        }
-
-        .creed-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .creed-title {
-            font-size: 1.2em;
-            font-weight: 500;
-            color: #e0e0e0;
+            font-size: 1em;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            padding: 0;
+            margin-bottom: 4px;
         }
-
+        .creed-toggle:focus {
+            outline: 2px solid #0f3460;
+        }
+        .triangle {
+            font-size: 1.1em;
+            transition: transform 0.2s;
+        }
         .creed-content {
-            color: #b0b0b0;
-            line-height: 1.6;
-            font-size: 0.95em;
-        }
-
-        .creed-full {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        .creed-full.show {
-            max-height: 2000px;
-        }
-
-        .creed-full .creed-text {
-            margin-top: 15px;
-            white-space: pre-line;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px;
+            background: rgba(45, 45, 60, 0.7);
             border-radius: 8px;
-            border-left: 3px solid rgba(255, 255, 255, 0.2);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.2;
-            font-size: 0.95em;
+            padding: 12px 16px;
+            margin-top: 2px;
+            color: #f5f5f5;
+            font-size: 0.98em;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            white-space: pre-line;
         }
-
-        .creed-line {
-            opacity: 0;
-            transition: opacity 0.8s ease;
-        }
-
-        .creed-line.show {
-            opacity: 1;
-        }
-
-        .btn.expand {
-            background: transparent;
-            font-size: 1.2em;
-            padding: 4px;
-            box-shadow: none;
-            min-width: 24px;
-            height: 24px;
-            border-radius: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: none;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .btn.expand:hover {
-            background: transparent;
-            box-shadow: none;
-            transform: scale(1.2);
-            color: rgba(255, 255, 255, 1);
-        }
-
-        .volume-control {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .volume-control label {
-            display: block;
+        .creed-pair {
             margin-bottom: 10px;
-            color: #b0b0b0;
-            font-weight: 500;
-        }
-
-        .volume-slider {
-            width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: #444;
-            outline: none;
-            -webkit-appearance: none;
-            appearance: none;
-        }
-
-        .volume-slider::-webkit-slider-thumb {
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #667eea;
-            cursor: pointer;
-        }
-
-        .volume-slider::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #667eea;
-            cursor: pointer;
-            border: none;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-                margin: 20px;
-            }
-            
-            .header h1 {
-                font-size: 2em;
-            }
-            
-            .music-info {
-                flex-direction: column;
-                gap: 10px;
-                align-items: flex-start;
-            }
+            text-align: left;
+            opacity: 0;
+            transition: opacity 0.5s;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🎵 溯源冥想播放器</h1>
-            <p>讓心靈在美妙的音樂中找到寧靜</p>
-        </div>
-
+        <h1>🎵 溯源冥想播放器</h1>
         <ul class="music-list">
-            <li class="music-item" data-src="html/meditationMusic/meditation1_rainbow.mp3">
-                <div class="music-info">
+            <li class="music-item">
                 <div class="music-title">溯源冥想1 Rainbow</div>
-                </div>
-                <div class="audio-container">
-                    <audio class="audio-player" controls preload="none">
-                        <source src="html/meditationMusic/meditation1_rainbow.mp3" type="audio/mpeg">
-                        您的瀏覽器不支援音頻播放。
-                    </audio>
-                    <div class="volume-display">
-                        <span class="volume-percentage">70%</span>
-                    </div>
-                </div>
+                <audio controls preload="none">
+                    <source src="meditationMusic/meditation1_rainbow.mp3" type="audio/mpeg">
+                    您的瀏覽器不支援音頻播放。
+                </audio>
             </li>
-
-            <li class="music-item" data-src="html/meditationMusic/meditation2_hamsa.mp3">
-                <div class="music-info">
+            <li class="music-item">
                 <div class="music-title">溯源冥想2 HamSa</div>
-                </div>
-                <div class="audio-container">
-                    <audio class="audio-player" controls preload="none">
-                        <source src="html/meditationMusic/meditation2_hamsa.mp3" type="audio/mpeg">
-                        您的瀏覽器不支援音頻播放。
-                    </audio>
-                    <div class="volume-display">
-                        <span class="volume-percentage">70%</span>
-                    </div>
-                </div>
+                <audio controls preload="none">
+                    <source src="meditationMusic/meditation2_hamsa.mp3" type="audio/mpeg">
+                    您的瀏覽器不支援音頻播放。
+                </audio>
             </li>
-
-            <li class="music-item" data-src="html/meditationMusic/meditation3_mindfulness.mp3">
-                <div class="music-info">
+            <li class="music-item">
                 <div class="music-title">溯源冥想3 Mindfulness</div>
-                </div>
-                <div class="audio-container">
-                    <audio class="audio-player" controls preload="none">
-                        <source src="html/meditationMusic/meditation3_mindfulness.mp3" type="audio/mpeg">
-                        您的瀏覽器不支援音頻播放。
-                    </audio>
-                    <div class="volume-display">
-                        <span class="volume-percentage">70%</span>
-                    </div>
-                </div>
+                <audio controls preload="none">
+                    <source src="meditationMusic/meditation3_mindfulness.mp3" type="audio/mpeg">
+                    您的瀏覽器不支援音頻播放。
+                </audio>
             </li>
-
-            <li class="music-item" data-src="html/meditationMusic/meditation4_warriorscreed.mp3">
-                <div class="music-info">
+            <li class="music-item">
                 <div class="music-title">溯源冥想4 Warrior's Creed</div>
-                </div>
-                <div class="audio-container">
-                    <audio class="audio-player" controls preload="none">
-                        <source src="html/meditationMusic/meditation4_warriorscreed.mp3" type="audio/mpeg">
-                        您的瀏覽器不支援音頻播放。
-                    </audio>
-                    <div class="volume-display">
-                        <span class="volume-percentage">70%</span>
-                    </div>
+                <audio controls preload="none">
+                    <source src="meditationMusic/meditation4_warriorscreed.mp3" type="audio/mpeg">
+                    您的瀏覽器不支援音頻播放。
+                </audio>
+                <div class="creed-container">
+                    <button class="creed-toggle" aria-expanded="false" aria-controls="creed-content">
+                        <span class="triangle">▶</span> 戰士的信條
+                    </button>
+                    <div class="creed-content" id="creed-content" style="display:none;"></div>
                 </div>
             </li>
         </ul>
-        
-        <div class="warriors-creed-section">
-            <div class="creed-header">
-                <div class="creed-title">
-                    戰士的信條
-                    <button class="btn expand" onclick="toggleCreed()">▼</button>
-                </div>
-            </div>
-            <div class="creed-full" id="creedFull">
-                <div class="creed-text" id="creedText">
-                    載入中...
-                </div>
-            </div>
-        </div>
-
-        <div id="currentPlaying" class="current-playing">
-            <h3>正在播放</h3>
-            <p id="currentSong"></p>
-        </div>
     </div>
-
     <script>
-        let currentAudio = null;
-        let currentItem = null;
-
-        function playMusic(button) {
-            const musicItem = button.closest('.music-item');
-            const audio = musicItem.querySelector('audio');
-            const title = musicItem.querySelector('.music-title').textContent;
-
-            // 停止當前播放的音樂
-            if (currentAudio && currentAudio !== audio) {
-                currentAudio.pause();
-                currentAudio.currentTime = 0;
-                if (currentItem) {
-                    currentItem.classList.remove('playing');
-                    const currentBtn = currentItem.querySelector('.play-btn');
-                    currentBtn.textContent = '▶️';
-                    currentBtn.disabled = false;
-                }
-            }
-
-            if (audio.paused) {
-                audio.play();
-                button.textContent = '⏸️';
-                musicItem.classList.add('playing');
-                currentAudio = audio;
-                currentItem = musicItem;
-                showCurrentPlaying(title);
-            } else {
-                audio.pause();
-                button.textContent = '▶️';
-                musicItem.classList.remove('playing');
-                hideCurrentPlaying();
-            }
-
-            // 添加事件監聽器
-            audio.addEventListener('ended', function() {
-                button.textContent = '▶️';
-                musicItem.classList.remove('playing');
-                hideCurrentPlaying();
-                currentAudio = null;
-                currentItem = null;
-            });
-
-            audio.addEventListener('pause', function() {
-                if (audio.currentTime === 0) {
-                    button.textContent = '▶️';
-                    musicItem.classList.remove('playing');
-                    hideCurrentPlaying();
-                }
-            });
-        }
-
-        function stopMusic(button) {
-            const musicItem = button.closest('.music-item');
-            const audio = musicItem.querySelector('audio');
-            const playBtn = musicItem.querySelector('.play-btn');
-
-            audio.pause();
-            audio.currentTime = 0;
-            playBtn.textContent = '▶️';
-            musicItem.classList.remove('playing');
-            
-            if (currentAudio === audio) {
-                hideCurrentPlaying();
-                currentAudio = null;
-                currentItem = null;
-            }
-        }
-
-        function showCurrentPlaying(title) {
-            const currentPlayingDiv = document.getElementById('currentPlaying');
-            const currentSong = document.getElementById('currentSong');
-            currentSong.textContent = title;
-            currentPlayingDiv.classList.add('show');
-        }
-
-        function hideCurrentPlaying() {
-            const currentPlayingDiv = document.getElementById('currentPlaying');
-            currentPlayingDiv.classList.remove('show');
-        }
-
-        // 初始化音量
-        window.addEventListener('load', function() {
-            initVolumeListeners();
-            setInitialVolume(70);
-            loadCreedContent();
-        });
-
-        function setInitialVolume(value) {
-            const volume = value / 100;
-            const audios = document.querySelectorAll('audio');
-            audios.forEach(audio => {
-                audio.volume = volume;
-                // 初始化時更新音量值但不顯示
-                updateVolumeDisplaySilent(audio);
-            });
-        }
-
-        function updateVolumeDisplaySilent(audio) {
-            const audioContainer = audio.closest('.audio-container');
-            const volumePercentage = audioContainer.querySelector('.volume-percentage');
-            const volume = Math.round(audio.volume * 100);
-            volumePercentage.textContent = volume + '%';
-        }
-
-        function initVolumeListeners() {
-            const audios = document.querySelectorAll('audio');
-            audios.forEach((audio) => {
-                let volumeTimeout;
-                
-                // 更簡單的音量變化檢測
-                audio.addEventListener('volumechange', function() {
-                    showVolumeDisplay(audio);
-                    updateVolumeDisplay(audio);
-                    
-                    clearTimeout(volumeTimeout);
-                    volumeTimeout = setTimeout(() => {
-                        hideVolumeDisplay(audio);
-                    }, 2000);
-                });
-
-                // 檢測用戶點擊音頻控制器
-                audio.addEventListener('mousedown', function(e) {
-                    showVolumeDisplay(audio);
-                    updateVolumeDisplay(audio);
-                });
-
-                // 檢測觸控操作
-                audio.addEventListener('touchstart', function(e) {
-                    showVolumeDisplay(audio);
-                    updateVolumeDisplay(audio);
-                });
-
-                // 當音頻獲得焦點時也顯示音量（鍵盤操作）
-                audio.addEventListener('focus', function() {
-                    showVolumeDisplay(audio);
-                    updateVolumeDisplay(audio);
-                    
-                    clearTimeout(volumeTimeout);
-                    volumeTimeout = setTimeout(() => {
-                        hideVolumeDisplay(audio);
-                    }, 3000);
-                });
-            });
-        }
-
-        function showVolumeDisplay(audio) {
-            const audioContainer = audio.closest('.audio-container');
-            const volumeDisplay = audioContainer.querySelector('.volume-display');
-            volumeDisplay.classList.add('show');
-        }
-
-        function hideVolumeDisplay(audio) {
-            const audioContainer = audio.closest('.audio-container');
-            const volumeDisplay = audioContainer.querySelector('.volume-display');
-            volumeDisplay.classList.remove('show');
-        }
-
-        function updateVolumeDisplay(audio) {
-            const audioContainer = audio.closest('.audio-container');
-            const volumePercentage = audioContainer.querySelector('.volume-percentage');
-            const volume = Math.round(audio.volume * 100);
-            volumePercentage.textContent = volume + '%';
-        }
-
-        function updateVolumeDisplaySilent(audio) {
-            const audioContainer = audio.closest('.audio-container');
-            const volumePercentage = audioContainer.querySelector('.volume-percentage');
-            const volume = Math.round(audio.volume * 100);
-            volumePercentage.textContent = volume + '%';
-        }
-
-        // 防止多個音頻同時播放
-        document.addEventListener('play', function(e) {
-            const audios = document.querySelectorAll('audio');
-            audios.forEach(audio => {
-                if (audio !== e.target) {
-                    audio.pause();
-                }
-            });
-        }, true);
-
-        // 戰士信條功能
-        let creedExpanded = false;
-        let creedContent = '';
-        let creedLines = [];
-
-        async function loadCreedContent() {
-            try {
-                const response = await fetch("warrior'sCreed/warror'sCreed.txt");
-                creedContent = await response.text();
-                // 將內容按行分組（中英文對）
-                const lines = creedContent.split('\n').filter(line => line.trim());
-                creedLines = [];
-                for (let i = 0; i < lines.length; i += 2) {
-                    if (i + 1 < lines.length) {
-                        creedLines.push({
-                            chinese: lines[i],
-                            english: lines[i + 1]
-                        });
-                    }
-                }
-                // 準備HTML結構但不顯示內容
-                document.getElementById('creedText').innerHTML = '';
-            } catch (error) {
-                console.error('無法載入戰士信條:', error);
-                document.getElementById('creedText').innerHTML = '<div class="creed-line">無法載入戰士信條內容</div>';
-            }
-        }
-
-        function toggleCreed() {
-            const creedFull = document.getElementById('creedFull');
-            const expandBtn = document.querySelector('.btn.expand');
-            
-            if (!creedExpanded) {
-                creedFull.classList.add('show');
-                expandBtn.textContent = '▲';
-                creedExpanded = true;
-                showCreedContent();
-            } else {
-                creedFull.classList.remove('show');
-                expandBtn.textContent = '▼';
-                creedExpanded = false;
-                // 清空內容
-                document.getElementById('creedText').innerHTML = '';
-            }
-        }
-
-        function showCreedContent() {
-            const creedTextElement = document.getElementById('creedText');
-            creedTextElement.innerHTML = '';
-            
-            creedLines.forEach((linePair, index) => {
-                // 創建中英文對的容器
-                const lineGroup = document.createElement('div');
-                lineGroup.className = 'creed-line';
-                lineGroup.innerHTML = `
-                    <div style="color: #e0e0e0; margin-bottom: 0; line-height:1;">${linePair.chinese}</div>
-                    <div style="color: #b0b0b0; font-style: italic; margin-top: 0; line-height:1;">${linePair.english}</div>
-                `;
-                creedTextElement.appendChild(lineGroup);
-                
-                // 延遲顯示每一組
+    document.addEventListener('DOMContentLoaded', function() {
+        var toggle = document.querySelector('.creed-toggle');
+        var content = document.querySelector('.creed-content');
+        var triangle = document.querySelector('.triangle');
+        var loaded = false;
+    
+        function showCreedAnimated(pairs) {
+            content.innerHTML = '';
+            let idx = 0;
+            function showNext() {
+                if (idx >= pairs.length) return;
+                var group = document.createElement('div');
+                group.className = 'creed-pair';
+                group.style.opacity = 0;
+                group.innerHTML = `<div>${pairs[idx][0]}</div><div>${pairs[idx][1]}</div>`;
+                content.appendChild(group);
                 setTimeout(() => {
-                    lineGroup.classList.add('show');
-                }, (index + 1) * 180); // 每組間隔180ms
-            });
+                    group.style.transition = 'opacity 0.5s';
+                    group.style.opacity = 1;
+                    idx++;
+                    setTimeout(showNext, 180);
+                }, 10);
+            }
+            showNext();
         }
+    
+        toggle.addEventListener('click', function() {
+            var expanded = toggle.getAttribute('aria-expanded') === 'true';
+            toggle.setAttribute('aria-expanded', !expanded);
+            content.style.display = expanded ? 'none' : 'block';
+            triangle.textContent = expanded ? '▶' : '▼';
+    
+            if (!expanded && !loaded) {
+                fetch("warriorCreed/warror'sCreed.txt")
+                    .then(function(response) { return response.text(); })
+                    .then(function(text) {
+                        var lines = text.split(/\r?\n/).filter(Boolean);
+                        var pairs = [];
+                        for (var i = 0; i < lines.length - 1; i += 2) {
+                            pairs.push([lines[i], lines[i + 1]]);
+                        }
+                        showCreedAnimated(pairs);
+                        loaded = true;
+                    })
+                    .catch(function() {
+                        content.textContent = '無法載入信條內容。';
+                    });
+            }
+        });
+    });
     </script>
 </body>
 </html>
