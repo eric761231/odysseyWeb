@@ -12,6 +12,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            margin: 0; /* 確保 body 沒有預設邊距 */
         }
         .container {
             background: rgba(30, 30, 45, 0.95);
@@ -21,6 +22,8 @@
             max-width: 600px;
             width: 90%;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 20px; /* 增加一點頂部間距 */
+            margin-bottom: 20px; /* 增加一點底部間距 */
         }
         h1 {
             text-align: center;
@@ -93,24 +96,8 @@
         .hide {
             display: none !important;
         }
-        .vertical-btns {
-            display: none;
-        }
-        .main-btn {
-            padding: 16px 40px;
-            background: linear-gradient(90deg, #0f3460 60%, #16213e 100%);
-            color: #fff;
-            font-size: 1.2em;
-            font-weight: 500;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-            text-decoration: none;
-            transition: background 0.2s, box-shadow 0.2s;
-        }
-        .main-btn:hover {
-            background: linear-gradient(90deg, #16213e 60%, #0f3460 100%);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.28);
-        }
+        
+        /* --- 側邊按鈕樣式 --- */
         .side-btn {
             position: fixed;
             top: 50%;
@@ -145,11 +132,30 @@
         .right-btn {
             right: 24px;
         }
+
+        /* --- 響應式設計：針對手機等小螢幕裝置 --- */
+        @media (max-width: 600px) {
+            .side-btn {
+                width: 36px;
+                height: 120px; /* 稍微調整高度以容納文字 */
+                font-size: 0.95em;
+                border-radius: 10px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+            }
+            .left-btn {
+                left: 8px; /* 讓按鈕更靠近邊緣 */
+            }
+            .right-btn {
+                right: 8px; /* 讓按鈕更靠近邊緣 */
+            }
+            h1 {
+                font-size: 1.8em; /* 在小螢幕上縮小標題 */
+            }
+            .container {
+                padding: 20px; /* 在小螢幕上減少內邊距 */
+            }
+        }
     </style>
-    <div class="vertical-btns">
-        <a href="articles.html" class="main-btn">每日閱讀</a>
-        <a href="calendar.html" class="main-btn">行事曆</a>
-    </div>
 </head>
 <body>
     <div class="container">
@@ -191,8 +197,10 @@
             </li>
         </ul>
     </div>
+    
     <a href="articles.html" class="side-btn left-btn">每日閱讀</a>
     <a href="calendar.html" class="side-btn right-btn">行事曆</a>
+    
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         var toggle = document.querySelector('.creed-toggle');
@@ -200,16 +208,11 @@
         var triangle = document.querySelector('.triangle');
         var loaded = false;
         
-        // 獲取第四個音頻元素（Warrior's Creed）
         var warriorAudio = document.querySelector('.music-item:nth-child(4) audio');
-        // 備用選擇器
         if (!warriorAudio) {
             warriorAudio = document.querySelector('.music-item:last-child audio');
         }
-        
-        // 調試：檢查是否找到音頻元素
-        console.log('Warrior audio element:', warriorAudio);
-    
+
         function showCreedAnimated(pairs) {
             content.innerHTML = '';
             let idx = 0;
@@ -224,13 +227,12 @@
                     group.style.transition = 'opacity 0.4s ease-in-out';
                     group.style.opacity = 1;
                     idx++;
-                    setTimeout(showNext, 180); // 改為 0.3 秒間隔
+                    setTimeout(showNext, 180);
                 }, 10);
             }
             showNext();
         }
-        
-        // 自動展開戰士信條的函數
+
         function autoExpandCreed() {
             var expanded = toggle.getAttribute('aria-expanded') === 'true';
             if (!expanded) {
@@ -239,7 +241,6 @@
                 triangle.textContent = '▼';
                 
                 if (!loaded) {
-                    // 第一次載入，從檔案讀取
                     var base = "./warrior'sCreed/warror'sCreed.txt";
                     fetch(base)
                         .then(function(response) { return response.text(); })
@@ -250,7 +251,6 @@
                                 pairs.push([lines[i], lines[i + 1]]);
                             }
                             showCreedAnimated(pairs);
-                            // 保存原始資料供後續使用
                             content.setAttribute('data-lines', lines.join(','));
                             loaded = true;
                         })
@@ -258,7 +258,6 @@
                             content.textContent = '無法載入信條內容。';
                         });
                 } else {
-                    // 已經載入過，使用保存的資料並顯示動畫
                     var lines = content.getAttribute('data-lines').split(',').filter(Boolean);
                     var pairs = [];
                     for (var i = 0; i < lines.length - 1; i += 2) {
@@ -281,7 +280,6 @@
 
             if (!expanded) {
                 if (!loaded) {
-                    // 第一次載入，從檔案讀取
                     var base = "./warrior'sCreed/warror'sCreed.txt";
                     fetch(base)
                         .then(function(response) { return response.text(); })
@@ -292,7 +290,6 @@
                                 pairs.push([lines[i], lines[i + 1]]);
                             }
                             showCreedAnimated(pairs);
-                            // 保存原始資料供後續使用
                             content.setAttribute('data-lines', lines.join(','));
                             loaded = true;
                         })
@@ -300,7 +297,6 @@
                             content.textContent = '無法載入信條內容。';
                         });
                 } else {
-                    // 已經載入過，使用保存的資料並顯示動畫
                     var lines = content.getAttribute('data-lines').split(',').filter(Boolean);
                     var pairs = [];
                     for (var i = 0; i < lines.length - 1; i += 2) {
@@ -311,15 +307,10 @@
             }
         });
         
-        // 監聽第四個音頻的播放事件
         if (warriorAudio) {
             warriorAudio.addEventListener('play', function() {
-                console.log('Warrior audio started playing');
-                // 延遲 0.2 秒後自動展開戰士信條
                 setTimeout(autoExpandCreed, 200);
             });
-        } else {
-            console.log('Warrior audio element not found');
         }
     });
     </script>
