@@ -172,9 +172,25 @@
             background: none;
             cursor: default;
         }
+        /* 日期圓形按鈕樣式 */
         .day-num {
             font-size: 1.1em;
             font-weight: 400;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            margin: 0 auto;
+            border-radius: 50%;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, color 0.2s;
+        }
+        .event-day {
+            background: #ffda36 !important;
+            color: #333 !important;
+            font-weight: 600;
         }
         .event-mark {
             color: #ffda36;
@@ -394,9 +410,9 @@
                         html += '</tr><tr>';
                     }
                     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                    // 加回事件標記●
-                    const eventMark = events[dateStr] ? `<div class="event-mark">●</div>` : '';
-                    html += `<td data-date="${dateStr}"><div class="day-num">${day}</div>${eventMark}</td>`;
+                    // 判斷是否有事件
+                    const hasEvent = !!events[dateStr];
+                    html += `<td data-date="${dateStr}"><div class="day-num${hasEvent ? ' event-day' : ''}">${day}</div></td>`;
                 }
 
                 // 後置空白
