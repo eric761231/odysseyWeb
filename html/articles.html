@@ -185,7 +185,7 @@ const monthFolders = [4,5,6,7,8,9,10].map(m => `2025-${String(m).padStart(2,'0')
 
 // 載入 JSON 檔案
 async function loadArticlesJson() {
-    const res = await fetch('articles/articles.json');
+    const res = await fetch('/articles/articles.json');
     articlesData = await res.json();
 }
 
