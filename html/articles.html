@@ -175,6 +175,7 @@
     </div>
     <script>
 // 取代 articlesData，動態讀取 txt 檔案
+
 let articlesData = {};
 const articlesPanel = document.getElementById('articles-panel');
 const monthList = document.getElementById('month-list');
@@ -185,8 +186,15 @@ const monthFolders = [4,5,6,7,8,9,10].map(m => `2025-${String(m).padStart(2,'0')
 
 // 載入 JSON 檔案
 async function loadArticlesJson() {
-    const res = await fetch('/articles/articles.json');
-    articlesData = await res.json();
+    try {
+        // 以相對路徑載入，確保本地與 Vercel 都能用
+        const res = await fetch('articles/articles.json');
+        if (!res.ok) throw new Error('載入失敗');
+        articlesData = await res.json();
+    } catch (e) {
+        articlesPanel.innerHTML = '<div style="color:red;">無法載入文章列表，請確認 articles.json 路徑與格式。</div>';
+        articlesData = {};
+    }
 }
 
 function renderArticles(month, page) {
@@ -244,56 +252,6 @@ monthList.addEventListener('click', async function(e) {
         }
     }
 });
-
-async function fetchArticle(month, idx) {
-    const folder = `articles/2025-${String(month).padStart(2,'0')}`;
-    const file = monthFiles[month][idx];
-    const res = await fetch(`${folder}/${file}`);
-    return await res.text();
-}
-
-async function renderArticles(month, page) {
-    const files = monthFiles[month] || [];
-    if (!files.length) {
-        articlesPanel.innerHTML = '<div>本月無文章</div>';
-        return;
-    }
-    page = Math.max(0, Math.min(page, files.length-1));
-    const fileName = files[page] || "";
-    const fileDate = fileName.slice(0,8);
-    const folder = `articles/2025-${String(month).padStart(2,'0')}`;
-    const res = await fetch(`${folder}/${fileName}`);
-    const text = await res.text();
-    const lines = text.split('\n');
-    // 讓首行『ODYSSEY 溯源課程』左對齊，『閱讀功課』右對齊
-    if (lines[0].includes('ODYSSEY 溯源課程') && lines[0].includes('閱讀功課')) {
-        const parts = lines[0].split('閱讀功課');
-        lines[0] = `<div style='display:flex;'><div style='flex:1;text-align:left;'>${parts[0].trim()}</div><div style='flex:1;text-align:right;'>閱讀功課</div></div>`;
-    }
-    // 在星期的英文前面加上檔案日期
-    for (let i = 0; i < lines.length; i++) {
-        if (/星期[一二三四五六日] +[A-Za-z]+/.test(lines[i])) {
-            lines[i] = `${fileDate} ${lines[i]}`;
-            break;
-        }
-    }
-    const htmlContent = lines.join('\n');
-    let html = `<div class=\"articles-slider\">`
-        + `<button class=\"slide-btn\" id=\"prev-btn\" ${page===0?'disabled':''} aria-label=\"上一頁\"><span class=\"arrow-icon\">&lt;</span></button>`
-        + `<div class=\"article-content\" style=\"white-space:pre-line;\">`
-        + `${htmlContent}`
-        + `<div style=\"text-align:center; color:#00aaff;\">${page+1} / ${files.length}</div>`
-        + `</div>`
-        + `<button class=\"slide-btn\" id=\"next-btn\" ${page===files.length-1?'disabled':''} aria-label=\"下一頁\"><span class=\"arrow-icon\">&gt;</span></button>`
-        + `</div>`;
-    articlesPanel.innerHTML = html;
-    document.getElementById('prev-btn').onclick = function() {
-        if (page > 0) renderArticles(month, page-1);
-    };
-    document.getElementById('next-btn').onclick = function() {
-        if (page < files.length-1) renderArticles(month, page+1);
-    };
-}
     </script>
 </body>
 </html>
