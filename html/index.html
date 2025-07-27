@@ -12,8 +12,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            color: #e0e0e0;
         }
         .container {
             background: rgba(30, 30, 45, 0.95);
@@ -29,6 +27,7 @@
             font-size: 2.2em;
             font-weight: 300;
             margin-bottom: 10px;
+            color: #fff;
         }
         .music-list {
             list-style: none;
@@ -94,7 +93,63 @@
         .hide {
             display: none !important;
         }
+        .vertical-btns {
+            display: none;
+        }
+        .main-btn {
+            padding: 16px 40px;
+            background: linear-gradient(90deg, #0f3460 60%, #16213e 100%);
+            color: #fff;
+            font-size: 1.2em;
+            font-weight: 500;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            text-decoration: none;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .main-btn:hover {
+            background: linear-gradient(90deg, #16213e 60%, #0f3460 100%);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+        }
+        .side-btn {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 180px;
+            padding: 0;
+            background: linear-gradient(180deg, #0f3460 60%, #16213e 100%);
+            color: #fff;
+            font-size: 1.1em;
+            font-weight: 500;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            text-decoration: none;
+            z-index: 100;
+            transition: background 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            writing-mode: vertical-rl;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+        .side-btn:hover {
+            background: linear-gradient(180deg, #16213e 60%, #0f3460 100%);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+        }
+        .left-btn {
+            left: 24px;
+        }
+        .right-btn {
+            right: 24px;
+        }
     </style>
+    <div class="vertical-btns">
+        <a href="articles.html" class="main-btn">每日閱讀</a>
+        <a href="calendar.html" class="main-btn">行事曆</a>
+    </div>
 </head>
 <body>
     <div class="container">
@@ -136,6 +191,8 @@
             </li>
         </ul>
     </div>
+    <a href="articles.html" class="side-btn left-btn">每日閱讀</a>
+    <a href="calendar.html" class="side-btn right-btn">行事曆</a>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         var toggle = document.querySelector('.creed-toggle');

@@ -7,7 +7,15 @@
     "start": "python -m http.server 8000",
     "serve": "python -m http.server 8000"
   },
-  "keywords": ["music", "meditation", "player", "web"],
+  "keywords": [
+    "music",
+    "meditation",
+    "player",
+    "web"
+  ],
   "author": "Your Name",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "firebase": "^12.0.0"
+  }
 }
