@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>行事曆</title>
-    <!-- Firebase CDN -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+    <!-- Firebase CDN (compat 版本，支援 v8 語法) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <style>
         body {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
@@ -282,6 +282,10 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // 全域狀態變數，確保渲染不會失敗
+            window.events = {};
+            window.currentYear = undefined;
+            window.currentMonth = undefined;
             // --- DOM 元素快取 ---
             const yearDisplay = document.getElementById('calendar-year-display');
             const monthDisplay = document.getElementById('calendar-month-display');
@@ -295,8 +299,9 @@
             const eventInputConfirmBtn = document.getElementById('event-input-confirm');
             const eventInputCancelBtn = document.getElementById('event-input-cancel');
 
-            // --- 狀態與資料 ---
-            // Firebase Firestore 直接串接 (CDN 版本)
+            // --- Firebase Firestore 串接 ---
+            // --- Firebase Firestore API 暫時註解，改用本地 events 物件 ---
+            // --- Firebase Firestore 串接（修正版）---
             const firebaseConfig = {
               apiKey: "AIzaSyBU3_T--Zbz3ScRE1RXuM8QXXYEdy0YiAw",
               authDomain: "icebergweb.firebaseapp.com",
@@ -305,24 +310,27 @@
               messagingSenderId: "879127434454",
               appId: "1:879127434454:web:a6df147b6d30f593412577"
             };
-            firebase.initializeApp(firebaseConfig);
+            const app = firebase.initializeApp(firebaseConfig);
             const db = firebase.firestore();
-
-            // ...已宣告於前方...
 
             // 取得指定月份所有事件 (Firestore)
             async function fetchEvents(year, month) {
-                events = {};
                 const monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
                 const startDate = `${monthStr}-01`;
                 const endDate = `${monthStr}-31`;
-                const snapshot = await db.collection("calendar")
-                    .where("date", ">=", startDate)
-                    .where("date", "<=", endDate)
-                    .get();
-                snapshot.forEach(doc => {
-                    events[doc.data().date] = doc.data().content;
-                });
+                let newEvents = {};
+                try {
+                    const snapshot = await db.collection("calendar")
+                        .where("date", ">=", startDate)
+                        .where("date", "<=", endDate)
+                        .get();
+                    snapshot.forEach(doc => {
+                        newEvents[doc.data().date] = doc.data().content;
+                    });
+                } catch (e) {
+                    // Firestore 失敗時，events 保持空物件
+                }
+                window.events = newEvents;
             }
 
             // 新增/更新事件 (Firestore)
@@ -333,29 +341,6 @@
             // 刪除事件 (Firestore)
             async function deleteEvent(date) {
                 await db.collection("calendar").doc(date).delete();
-            }
-
-            // ...已宣告於前方...
-
-            // 取得指定月份所有事件 (Firestore)
-            async function fetchEvents(year, month) {
-                events = {};
-                const monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
-                const q = query(collection(db, "calendar"), where("date", ">=", `${monthStr}-01`), where("date", "<=", `${monthStr}-31`));
-                const querySnapshot = await getDocs(q);
-                querySnapshot.forEach((docSnap) => {
-                    events[docSnap.data().date] = docSnap.data().content;
-                });
-            }
-
-            // 新增/更新事件 (Firestore)
-            async function saveEvent(date, content) {
-                await setDoc(doc(db, "calendar", date), { date, content });
-            }
-
-            // 刪除事件 (Firestore)
-            async function deleteEvent(date) {
-                await deleteDoc(doc(db, "calendar", date));
             }
 
             // --- 函式定義 ---
@@ -503,10 +488,14 @@
             });
 
             // --- 初始化 ---
-            const today = new Date();
-            fetchEvents(today.getFullYear(), today.getMonth()).then(() => {
+            (async function() {
+                const today = new Date();
+                // 先渲染空白月曆，確保日期一定出現
                 renderCalendar(today.getFullYear(), today.getMonth());
-            });
+                // 再載入事件資料，載入後再重繪（即使 API 失敗也不影響日期）
+                await fetchEvents(today.getFullYear(), today.getMonth());
+                renderCalendar(today.getFullYear(), today.getMonth());
+            })();
 
             // 新增活動 - 確認
             eventInputConfirmBtn.addEventListener('click', async () => {
@@ -520,9 +509,8 @@
                     events[date] = title;
                 }
                 eventInputPopup.style.display = 'none';
-                fetchEvents(currentYear, currentMonth).then(() => {
-                    renderCalendar(currentYear, currentMonth);
-                });
+                await fetchEvents(currentYear, currentMonth);
+                renderCalendar(currentYear, currentMonth);
             });
 
             // 新增活動 - 取消
