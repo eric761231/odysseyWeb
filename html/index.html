@@ -198,15 +198,12 @@
         </ul>
     </div>
     
-    <button class="side-btn left-btn" id="start-articles-server">每日閱讀</button>
+    <a href="articles.html" class="side-btn left-btn">每日閱讀</a>
     <a href="calendar.html" class="side-btn right-btn">行事曆</a>
     
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('start-articles-server').onclick = function() {
-            alert('請在 PowerShell 執行：\npython articles_server.py\n啟動後再點擊「每日閱讀」進入 http://localhost:5000/html/articles.html');
-            window.open('http://localhost:5000/html/articles.html', '_blank');
-        };
+        // ...existing code...
         var toggle = document.querySelector('.creed-toggle');
         var content = document.querySelector('.creed-content');
         var triangle = document.querySelector('.triangle');
