@@ -220,6 +220,28 @@
             min-width: 280px;
             text-align: center;
             display: none; /* 初始隱藏 */
+            position: relative; /* 為 X 按鈕定位 */
+        }
+        
+        .event-input-close {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: color 0.2s, background 0.2s;
+            line-height: 1;
+        }
+        
+        .event-input-close:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
         }
         #event-input-date {
             margin-bottom: 12px;
@@ -309,12 +331,13 @@
         </div>
 
         <div id="event-input-popup" class="event-input-popup">
+            <button id="event-input-close" class="event-input-close" onclick="document.getElementById('event-input-popup').style.display='none'">×</button>
             <div id="event-input-date"></div>
             <textarea id="event-input-title" placeholder="輸入活動內容..." rows="3"></textarea>
             <div>
                 <button id="event-input-confirm">確定</button>
-    <div id="event-status"></div>
             </div>
+            <div id="event-status"></div>
         </div>
         
         <div id="event-list"></div>
@@ -339,6 +362,10 @@
             const eventInputTitle = document.getElementById('event-input-title');
             const eventInputConfirmBtn = document.getElementById('event-input-confirm');
             const eventInputCancelBtn = document.getElementById('event-input-cancel');
+            const eventInputCloseBtn = document.getElementById('event-input-close');
+            
+            // 調試：檢查 X 按鈕是否找到
+            console.log('X button element:', eventInputCloseBtn);
 
             // --- Firebase Firestore 串接（修正版）---
             const firebaseConfig = {
@@ -568,6 +595,8 @@
             eventInputCancelBtn.addEventListener('click', () => {
                 eventInputPopup.style.display = 'none';
             });
+            
+            // X 按鈕功能已通過 onclick 處理
 
             // 點擊頁面其他地方，關閉所有彈窗
             document.addEventListener('click', (e) => {
